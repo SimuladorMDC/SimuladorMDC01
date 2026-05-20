@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MDC Admin — Atualizar Grupos</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0D0D12;--s1:#16161E;--s2:#1E1E2A;--b1:rgba(255,255,255,0.07);--b2:rgba(255,255,255,0.13);--ac:#7B5CFA;--ac2:#A78BFA;--gn:#10D98C;--gnb:rgba(16,217,140,0.1);--rd:#FF5757;--am:#F59E0B;--tx:#F0F0F8;--tx2:#9090A8;--tx3:#5A5A72;--fn:'Sora',sans-serif;--mo:'JetBrains Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--fn);background:var(--bg);color:var(--tx);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:32px 16px}
+.logo{font-size:22px;font-weight:700;color:var(--ac2);margin-bottom:4px;text-align:center}
+.sub{font-size:13px;color:var(--tx3);margin-bottom:32px;text-align:center}
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:16px;padding:24px;width:100%;max-width:600px;margin-bottom:16px}
+.ct{font-size:11px;font-weight:600;color:var(--tx3);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px}
+.f{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.f label{font-size:12px;color:var(--tx2);font-weight:500}
+input[type=text],input[type=password],textarea{background:var(--s2);border:1px solid var(--b2);border-radius:8px;color:var(--tx);font-family:var(--fn);font-size:14px;padding:11px 12px;outline:none;width:100%;transition:border-color .15s}
+textarea{font-family:var(--mo);font-size:12px;resize:vertical;min-height:200px}
+input:focus,textarea:focus{border-color:var(--ac)}
+.btn{padding:13px 20px;border:none;border-radius:10px;font-family:var(--fn);font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;width:100%;margin-bottom:8px}
+.btp{background:var(--ac);color:#fff}
+.btp:hover{background:#6B4EE0}
+.btg{background:var(--gnb);border:1px solid rgba(16,217,140,.3);color:var(--gn)}
+.bts{background:var(--s2);border:1px solid var(--b2);color:var(--tx2);font-size:13px}
+.msg{padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:12px;display:none;line-height:1.5}
+.msg-ok{background:var(--gnb);border:1px solid rgba(16,217,140,.3);color:var(--gn)}
+.msg-err{background:rgba(255,87,87,.1);border:1px solid rgba(255,87,87,.2);color:var(--rd)}
+.msg-info{background:rgba(123,92,250,.1);border:1px solid rgba(123,92,250,.3);color:var(--ac2)}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px}
+.stat{background:var(--s2);border-radius:8px;padding:12px;text-align:center}
+.stat-n{font-size:22px;font-weight:700;font-family:var(--mo);color:var(--ac2)}
+.stat-l{font-size:11px;color:var(--tx3);margin-top:3px}
+#login-screen{width:100%;max-width:400px}
+#admin-screen{width:100%;max-width:600px;display:none}
+a{color:var(--ac2);text-decoration:none}
+a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+
+<div class="logo">🛡 MDC Admin</div>
+<div class="sub">Painel de atualização de grupos</div>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="card">
+    <div class="ct">Acesso restrito</div>
+    <div class="msg msg-err" id="login-err">Senha incorreta. Tente novamente.</div>
+    <div class="f">
+      <label>Senha de admin</label>
+      <input type="password" id="senha" placeholder="Digite a senha" autocomplete="current-password">
+    </div>
+    <button class="btn btp" id="btn-login">Entrar</button>
+  </div>
+  <div style="text-align:center;margin-top:12px">
+    <a href="./index.html">← Voltar para o simulador</a>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="admin-screen">
+  <div class="card">
+    <div class="ct">Status atual dos grupos</div>
+    <div id="status-atual" style="font-size:13px;color:var(--tx2)">Carregando...</div>
+    <div class="stats" id="stats" style="display:none">
+      <div class="stat"><div class="stat-n" id="st-total">—</div><div class="stat-l">Total grupos</div></div>
+      <div class="stat"><div class="stat-n" id="st-tipos">—</div><div class="stat-l">Tipos</div></div>
+      <div class="stat"><div class="stat-n" id="st-data">—</div><div class="stat-l">Atualizado</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">Atualizar grupos</div>
+    <div class="msg" id="msg"></div>
+
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <button class="btn btg" id="btn-upload-json" style="width:auto;flex:1;padding:11px">📥 Carregar arquivo JSON</button>
+      <button class="btn bts" id="btn-colar" style="width:auto;flex:1;padding:11px">📋 Colar JSON manualmente</button>
+    </div>
+    <input type="file" id="file-json" accept=".json" style="display:none">
+
+    <div id="area-colar" style="display:none">
+      <div class="f">
+        <label>Cole o conteúdo do arquivo JSON aqui</label>
+        <textarea id="json-input" placeholder='{"mdc_import":true,"grupos":[...]}'></textarea>
+      </div>
+    </div>
+
+    <div id="preview" style="display:none;margin-bottom:14px">
+      <div style="font-size:12px;color:var(--tx2);margin-bottom:8px">Preview dos dados carregados:</div>
+      <div class="stats">
+        <div class="stat"><div class="stat-n" id="prev-total">—</div><div class="stat-l">Grupos</div></div>
+        <div class="stat"><div class="stat-n" id="prev-fxi">—</div><div class="stat-l">FXI</div></div>
+        <div class="stat"><div class="stat-n" id="prev-fxii">—</div><div class="stat-l">FXII/III</div></div>
+      </div>
+    </div>
+
+    <button class="btn btp" id="btn-salvar" style="display:none">💾 Salvar e publicar para todos</button>
+    <button class="btn bts" id="btn-limpar-dados" style="display:none">✕ Limpar</button>
+  </div>
+
+  <div class="card">
+    <div class="ct">Histórico</div>
+    <div id="historico" style="font-size:13px;color:var(--tx2)">Nenhum registro ainda.</div>
+  </div>
+
+  <div style="text-align:center;margin-top:8px">
+    <a href="./index.html">← Voltar para o simulador</a>
+  </div>
+</div>
+
+<script>
+// ═══ SENHA ═══
+// Troque para sua senha real! Esta é apenas uma proteção básica no frontend.
+const SENHA_HASH = btoa('mdc2024admin'); // mude aqui para sua senha
+
+let dadosCarregados = null;
+
+// Login
+document.getElementById('btn-login').addEventListener('click', fazerLogin);
+document.getElementById('senha').addEventListener('keydown', e => { if(e.key==='Enter') fazerLogin(); });
+
+function fazerLogin() {
+  const senha = document.getElementById('senha').value;
+  if (btoa(senha) === SENHA_HASH) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-screen').style.display = 'block';
+    localStorage.setItem('mdc_admin_auth', SENHA_HASH);
+    carregarStatus();
+  } else {
+    document.getElementById('login-err').style.display = 'block';
+  }
+}
+
+// Auto-login se já autenticado
+if (localStorage.getItem('mdc_admin_auth') === SENHA_HASH) {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('admin-screen').style.display = 'block';
+  carregarStatus();
+}
+
+// Carrega status atual
+async function carregarStatus() {
+  try {
+    const r = await fetch('./grupos.json?t=' + Date.now());
+    const d = await r.json();
+    const grupos = d.grupos || [];
+    const dt = d.atualizado ? new Date(d.atualizado).toLocaleString('pt-BR') : '—';
+    const tipos = [...new Set(grupos.map(g=>g.ti))].join(', ') || '—';
+
+    document.getElementById('status-atual').textContent = '';
+    document.getElementById('stats').style.display = 'grid';
+    document.getElementById('st-total').textContent = grupos.length;
+    document.getElementById('st-tipos').textContent = tipos;
+    document.getElementById('st-data').textContent = dt.split(' ')[0];
+
+    // Histórico
+    const hist = JSON.parse(localStorage.getItem('mdc_hist') || '[]');
+    if (hist.length) {
+      document.getElementById('historico').innerHTML = hist.slice(-5).reverse().map(h =>
+        `<div style="padding:6px 0;border-bottom:1px solid var(--b1);font-size:12px">
+          <strong style="color:var(--tx)">${h.total} grupos</strong> · ${h.data}
+        </div>`
+      ).join('');
+    }
+  } catch(e) {
+    document.getElementById('status-atual').textContent = 'Nenhum grupo publicado ainda.';
+  }
+}
+
+// Carregar arquivo
+document.getElementById('btn-upload-json').addEventListener('click', () => document.getElementById('file-json').click());
+document.getElementById('file-json').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    document.getElementById('json-input').value = ev.target.result;
+    processarJSON(ev.target.result);
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+// Colar manualmente
+document.getElementById('btn-colar').addEventListener('click', () => {
+  const area = document.getElementById('area-colar');
+  area.style.display = area.style.display === 'none' ? 'block' : 'none';
+});
+
+document.getElementById('json-input').addEventListener('input', e => {
+  if (e.target.value.trim()) processarJSON(e.target.value);
+});
+
+function processarJSON(texto) {
+  try {
+    const data = JSON.parse(texto.trim());
+    const grupos = data.mdc_import ? data.grupos : (Array.isArray(data) ? data : null);
+    if (!grupos) { showMsg('JSON inválido — formato não reconhecido.', 'err'); return; }
+
+    dadosCarregados = grupos;
+    const fxi = grupos.filter(g => g.ti === 'FXI').length;
+    const outros = grupos.filter(g => g.ti !== 'FXI').length;
+
+    document.getElementById('preview').style.display = 'block';
+    document.getElementById('prev-total').textContent = grupos.length;
+    document.getElementById('prev-fxi').textContent = fxi;
+    document.getElementById('prev-fxii').textContent = outros;
+    document.getElementById('btn-salvar').style.display = 'block';
+    document.getElementById('btn-limpar-dados').style.display = 'block';
+    showMsg(`✓ ${grupos.length} grupos carregados e prontos para publicar!`, 'ok');
+  } catch(e) {
+    showMsg('JSON inválido. Verifique o arquivo e tente novamente.', 'err');
+  }
+}
+
+// Salvar — usa localStorage como "banco" compartilhado via chave especial
+// Na prática, salva no localStorage do admin E atualiza o grupos.json via Netlify Blob API
+document.getElementById('btn-salvar').addEventListener('click', async () => {
+  if (!dadosCarregados) return;
+
+  const agora = new Date().toISOString();
+  const payload = {
+    mdc_import: true,
+    grupos: dadosCarregados,
+    total: dadosCarregados.length,
+    atualizado: agora
+  };
+
+  // Salva no localStorage para funcionar localmente
+  localStorage.setItem('mdc_grupos_servidor', JSON.stringify(payload));
+  localStorage.setItem('mdc_grupos_ts', agora);
+
+  // Tenta salvar via Netlify Blobs API (funciona quando hospedado no Netlify)
+  try {
+    const resp = await fetch('/.netlify/functions/salvar-grupos', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    });
+    if (resp.ok) {
+      showMsg(`✅ ${dadosCarregados.length} grupos publicados! Todos os vendedores já podem ver.`, 'ok');
+    } else {
+      throw new Error('função não disponível');
+    }
+  } catch(e) {
+    // Fallback: instrui o admin a fazer o upload manual do arquivo
+    showMsg(`✅ Dados salvos localmente! Para publicar para todos:<br>1. Baixe o arquivo abaixo<br>2. No Netlify → seu site → Deploys → arraste o arquivo grupos.json`, 'info');
+    // Gera download do arquivo atualizado
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'grupos.json'; a.click();
+  }
+
+  // Salva histórico
+  const hist = JSON.parse(localStorage.getItem('mdc_hist') || '[]');
+  hist.push({total: dadosCarregados.length, data: new Date().toLocaleString('pt-BR')});
+  localStorage.setItem('mdc_hist', JSON.stringify(hist.slice(-20)));
+
+  carregarStatus();
+});
+
+document.getElementById('btn-limpar-dados').addEventListener('click', () => {
+  dadosCarregados = null;
+  document.getElementById('json-input').value = '';
+  document.getElementById('preview').style.display = 'none';
+  document.getElementById('btn-salvar').style.display = 'none';
+  document.getElementById('btn-limpar-dados').style.display = 'none';
+  document.getElementById('msg').style.display = 'none';
+});
+
+function showMsg(txt, tipo) {
+  const el = document.getElementById('msg');
+  el.innerHTML = txt;
+  el.className = 'msg msg-' + tipo;
+  el.style.display = 'block';
+}
+</script>
+</body>
+</html>
