@@ -627,10 +627,16 @@ function renderGrp(){
     // Faixas de crédito ordenadas
     const faixasOrdenadas=[...faixas].sort((a,b)=>a.cred-b.cred);
     const faixasHTML=faixasOrdenadas.map(f=>`
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 10px;background:var(--s1);border-radius:6px;margin-top:4px">
-        <span style="font-family:var(--mo);font-size:13px;color:var(--tx)">${fmt(f.cred)}</span>
-        <span style="font-family:var(--mo);font-size:12px;color:var(--tx2)">${fmt(f.parc)}/mês</span>
-        ${f._origem!=='servidor'?`<button onclick="delGrp(${f.id})" style="background:var(--rdb);border:none;color:var(--rd);border-radius:4px;padding:2px 7px;cursor:pointer;font-size:11px">✕</button>`:''}
+      <div style="background:var(--s1);border-radius:8px;margin-top:6px;padding:8px 10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <span style="font-family:var(--mo);font-size:14px;font-weight:700;color:var(--tx)">${fmt(f.cred)}</span>
+          <span style="font-family:var(--mo);font-size:13px;font-weight:600;color:var(--ac2)">${fmt(f.parc)}/mês</span>
+          ${f._origem!=='servidor'?`<button onclick="delGrp(${f.id})" style="background:var(--rdb);border:none;color:var(--rd);border-radius:4px;padding:2px 7px;cursor:pointer;font-size:11px">✕</button>`:''}
+        </div>
+        ${f.proxAssembleia?`<div style="font-size:11px;color:var(--tx3);margin-top:2px">📅 Próx. Assembléia: <span style="color:var(--tx2)">${f.proxAssembleia}</span></div>`:''}
+        ${f.vencimento?`<div style="font-size:11px;color:var(--tx3)">📆 Vencimento: <span style="color:var(--tx2)">${f.vencimento}</span></div>`:''}
+        ${f.indCorrecao?`<div style="font-size:11px;color:var(--tx3)">📊 Ind. Correção: <span style="color:var(--tx2)">${f.indCorrecao}</span></div>`:''}
+        ${f.parcelasContemplacao!==undefined&&f.parcelasContemplacao!==''?`<div style="font-size:11px;color:var(--tx3)">💰 Parcelas na contemplação: <span style="color:var(--tx2)">${f.parcelasContemplacao}</span></div>`:''}
       </div>`).join('');
 
     return `<div class="grp-card ${g.ok?'ok':'no'}">
