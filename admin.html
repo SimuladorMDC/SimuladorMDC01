@@ -228,31 +228,23 @@ document.getElementById('btn-salvar').addEventListener('click', async () => {
     atualizado: agora
   };
 
-  // Salva no localStorage para funcionar localmente
+  // Salva no localStorage — todos os vendedores que abrirem no mesmo dispositivo verão
   localStorage.setItem('mdc_grupos_servidor', JSON.stringify(payload));
   localStorage.setItem('mdc_grupos_ts', agora);
 
-  // Tenta salvar via Netlify Blobs API (funciona quando hospedado no Netlify)
-  try {
-    const resp = await fetch('/.netlify/functions/salvar-grupos', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(payload)
-    });
-    if (resp.ok) {
-      showMsg(`✅ ${dadosCarregados.length} grupos publicados! Todos os vendedores já podem ver.`, 'ok');
-    } else {
-      throw new Error('função não disponível');
-    }
-  } catch(e) {
-    // Fallback: instrui o admin a fazer o upload manual do arquivo
-    showMsg(`✅ Dados salvos localmente! Para publicar para todos:<br>1. Baixe o arquivo abaixo<br>2. No Netlify → seu site → Deploys → arraste o arquivo grupos.json`, 'info');
-    // Gera download do arquivo atualizado
-    const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = 'grupos.json'; a.click();
-  }
+  // Gera arquivo grupos.json para fazer upload no GitHub
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'grupos.json'; a.click();
+
+  showMsg(`✅ ${dadosCarregados.length} grupos salvos!<br><br>
+    <strong>Para publicar para todos os vendedores:</strong><br>
+    1. O arquivo <code>grupos.json</code> foi baixado automaticamente<br>
+    2. Acesse <a href="https://github.com" target="_blank" style="color:var(--ac2)">github.com</a> → seu repositório <code>simulador-mdc</code><br>
+    3. Clique em <strong>grupos.json</strong> → ícone de lápis ✏️ → apague tudo → cole o conteúdo<br>
+    4. Ou arraste o arquivo direto para a pasta do repositório<br>
+    5. Clique <strong>Commit changes</strong> → pronto! Todos veem os grupos novos em 1 minuto.`, 'info');
 
   // Salva histórico
   const hist = JSON.parse(localStorage.getItem('mdc_hist') || '[]');

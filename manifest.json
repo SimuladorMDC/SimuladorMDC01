@@ -1,18 +1,14 @@
 {
-  "manifest_version": 3,
-  "name": "MDC Importador",
-  "version": "5.0",
-  "description": "Importa TODOS os grupos do Clik Vendas para o Simulador MDC",
-  "permissions": ["activeTab", "storage", "tabs", "downloads", "scripting"],
-  "host_permissions": ["https://clickvenda.app/*"],
-  "background": {"service_worker": "background.js"},
-  "action": {
-    "default_popup": "popup.html",
-    "default_icon": {"48": "icon.png"}
-  },
-  "content_scripts": [{
-    "matches": ["https://clickvenda.app/*"],
-    "js": ["content.js"],
-    "run_at": "document_idle"
-  }]
+  "name": "MDC Simulador",
+  "short_name": "MDC",
+  "description": "Simulador de consórcio MDC",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0D0D12",
+  "theme_color": "#7B5CFA",
+  "orientation": "portrait-primary",
+  "icons": [
+    {"src":"icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
+    {"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+  ]
 }
