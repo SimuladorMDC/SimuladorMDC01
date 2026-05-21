@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "MDC Importador",
+  "version": "5.0",
+  "description": "Importa TODOS os grupos do Clik Vendas para o Simulador MDC",
+  "permissions": ["activeTab", "storage", "tabs", "downloads", "scripting"],
+  "host_permissions": ["https://clickvenda.app/*"],
+  "background": {"service_worker": "background.js"},
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {"48": "icon.png"}
+  },
+  "content_scripts": [{
+    "matches": ["https://clickvenda.app/*"],
+    "js": ["content.js"],
+    "run_at": "document_idle"
+  }]
+}

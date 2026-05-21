@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;width:320px;background:#0D0D12;color:#F0F0F8;padding:16px}
+.logo{font-size:15px;font-weight:700;color:#A78BFA;margin-bottom:2px}
+.sub{font-size:11px;color:#5A5A72;margin-bottom:14px}
+.status{background:#1E1E2A;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:12px;margin-bottom:10px;font-size:12px;color:#9090A8;min-height:56px;line-height:1.6}
+.status strong{color:#F0F0F8}
+.progress{background:#1E1E2A;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:12px;margin-bottom:10px;display:none}
+.progress-bar-wrap{background:#0D0D12;border-radius:6px;height:8px;margin:8px 0}
+.progress-bar{background:#7B5CFA;height:8px;border-radius:6px;transition:width .3s;width:0%}
+.progress-txt{font-size:12px;color:#9090A8}
+.progress-count{font-size:13px;font-weight:700;color:#A78BFA;font-family:monospace}
+.btn{width:100%;padding:12px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-primary{background:#7B5CFA;color:#fff}
+.btn-primary:hover:not(:disabled){background:#6B4EE0}
+.btn-green{background:rgba(16,217,140,.12);border:1px solid rgba(16,217,140,.3);color:#10D98C}
+.btn-green:hover:not(:disabled){background:rgba(16,217,140,.2)}
+.btn-sec{background:#1E1E2A;border:1px solid rgba(255,255,255,.1);color:#9090A8}
+.btn-sec:hover:not(:disabled){background:#252535;color:#F0F0F8}
+.alert{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:#F59E0B;border-radius:6px;padding:8px 10px;font-size:11px;margin-bottom:10px;display:none;line-height:1.5}
+.sep{border:none;border-top:1px solid rgba(255,255,255,.07);margin:8px 0}
+</style>
+</head>
+<body>
+<div class="logo">🚀 MDC Importador</div>
+<div class="sub">Clik Vendas → Simulador MDC</div>
+<div class="alert" id="alerta"></div>
+<div class="status" id="status">Verificando página...</div>
+<div class="progress" id="progress">
+  <div class="progress-txt">Varrendo... <span class="progress-count" id="prog-count">0/0</span></div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="prog-bar"></div></div>
+  <div class="progress-txt" id="prog-grupos">0 grupos coletados</div>
+</div>
+<button class="btn btn-primary" id="btn-varrer" disabled>⚡ Importar todos os grupos</button>
+<button class="btn btn-green" id="btn-baixar" disabled>💾 Baixar arquivo JSON</button>
+<hr class="sep">
+<button class="btn btn-sec" id="btn-fechar">Fechar</button>
+<script src="popup.js"></script>
+</body>
+</html>
